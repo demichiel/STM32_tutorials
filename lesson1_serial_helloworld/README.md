@@ -90,7 +90,7 @@ We'll be using blocking mode in this lesson, and interrupt mode in the upcoming 
 
 You can use this function on its own, however since serial is mostly used to print debug messages, it's a better idea to get `printf()` working instead. And all you have to do is provide your own `fputc()` function:
 
-```
+```c
 int fputc(int ch, FILE *f)
 {
     HAL_UART_Transmit(&huart1, (unsigned char *)&ch, 1, 100);
@@ -101,7 +101,7 @@ This is called for each character that `printf` tries to print, and in this case
 
 When using STM32CubeIDE with the default config you need to use the `__io_putchar` function instead of the `fputc` function. Some code that handles both cases:
 
-```
+```c
 #ifdef __GNUC__
   /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
      set to 'Yes') calls __io_putchar() */
@@ -129,7 +129,7 @@ You can put this anywhere in `main.c`, but I like to put it inside `/* USER CODE
 
 After that you'll be able to use `printf()` just like everywhere else, that means we can now get `hello world` out of the way:
 
-```
+```c
 printf("hello world\n");
 HAL_Delay(500);
 ```
