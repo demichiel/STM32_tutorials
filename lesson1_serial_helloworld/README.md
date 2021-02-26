@@ -99,6 +99,32 @@ int fputc(int ch, FILE *f)
 ```
 This is called for each character that `printf` tries to print, and in this case just sends the character through serial.
 
+When using STM32CubeIDE with the default config you need to use the `__io_putchar` function instead of the `fputc` function. Some code that handles both cases:
+
+```
+#ifdef __GNUC__
+  /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+     set to 'Yes') calls __io_putchar() */
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+/**
+  * @brief  Retargets the C library printf function to the USART.
+  * @param  None
+  * @retval None
+  */
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
+}
+```
+[Source: Waveshare](https://www.waveshare.com/wiki/STM32CubeMX_Tutorial_Series:_USART)
+
 You can put this anywhere in `main.c`, but I like to put it inside `/* USER CODE 0 */` block just before `main()` function.
 
 After that you'll be able to use `printf()` just like everywhere else, that means we can now get `hello world` out of the way:
